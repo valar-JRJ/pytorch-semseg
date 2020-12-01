@@ -205,9 +205,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="config")
     parser.add_argument(
         "--config",
-        nargs="?",
         type=str,
-        default="configs/fcn8s_pascal.yml",
+        default="configs/segnet.yaml",
         help="Configuration file to use",
     )
 

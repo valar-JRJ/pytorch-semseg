@@ -9,14 +9,14 @@ data:
     val_split: val
     img_rows: 360
     img_cols: 480
-    path: 'data/pascal//VOCdevkit/VOC2012'
+    path: '../data/pascal/VOCdevkit/VOC2012'
     is_transform: True
 
 # Training Configuration
 training:
     n_workers: 4
     train_iters: 35000
-    batch_size: 16
+    batch_size: 8
     val_interval: 500
     print_interval: 25
     loss:
@@ -26,9 +26,8 @@ training:
     # Optmizer Configuration
     optimizer:
         name: adam
-        lr: 1.0e-3
+        lr: 0.001
         weight_decay: 0.0005
-        momentum: 0.9
        
     # Augmentations Configuration
     augmentations:
@@ -38,5 +37,8 @@ training:
     # LR Schedule Configuration
     lr_schedule:
         name: multi_step
-        milestones: [30000, 35000]
+        milestones: [24000, 30000]
         gamma: 0.1
+
+    # Resume from checkpoint
+    resume: None

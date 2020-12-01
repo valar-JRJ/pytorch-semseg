@@ -70,7 +70,7 @@ class pascalVOCLoader(data.Dataset):
                 file_list = tuple(open(path, "r"))
                 file_list = [id_.rstrip() for id_ in file_list]
                 self.files[split] = file_list
-            self.setup_annotations()
+            # self.setup_annotations()
 
         self.tf = transforms.Compose(
             [
@@ -85,7 +85,7 @@ class pascalVOCLoader(data.Dataset):
     def __getitem__(self, index):
         im_name = self.files[self.split][index]
         im_path = pjoin(self.root, "JPEGImages", im_name + ".jpg")
-        lbl_path = pjoin(self.root, "SegmentationClass/pre_encoded", im_name + ".png")
+        lbl_path = pjoin(self.root, "SegmentationClass", im_name + ".png")
         im = Image.open(im_path)
         lbl = Image.open(lbl_path)
         if self.augmentations is not None:
