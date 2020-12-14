@@ -1,5 +1,6 @@
 import os
 import torch
+import glob
 import argparse
 import numpy as np
 import scipy.misc as misc
@@ -18,7 +19,7 @@ except:
     )
 
 
-def test(args):
+def test(args, img_path):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -26,8 +27,8 @@ def test(args):
     model_name = model_file_name[: model_file_name.find("_")]
 
     # Setup image
-    print("Read Input Image from : {}".format(args.img_path))
-    img = misc.imread(args.img_path)
+    print("Read Input Image from : {}".format(args.folder_path))
+    img = misc.imread(img_path)
 
     data_loader = get_loader(args.dataset)
     loader = data_loader(root=None, is_transform=True, img_norm=args.img_norm, test_mode=True)
@@ -94,7 +95,9 @@ def test(args):
 
     decoded = loader.decode_segmap(pred)
     print("Classes found: ", np.unique(pred))
-    misc.imsave(args.out_path, decoded)
+    filename = img_path.split('/')[-1].split('.')[0]
+    misc.imsave(f'output/{filename}output.png', decoded)
+    # misc.imsave(args.out_path, decoded)
     print("Segmentation Mask Saved at: {}".format(args.out_path))
 
 
@@ -102,14 +105,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Params")
     parser.add_argument(
         "--model_path",
-        nargs="?",
         type=str,
-        default="fcn8s_pascal_1_26.pkl",
+        default="runs/segnet./24756/segnet_pascal_best_model.pkl",
         help="Path to the saved model",
     )
     parser.add_argument(
         "--dataset",
-        nargs="?",
         type=str,
         default="pascal",
         help="Dataset to use ['pascal, camvid, ade20k etc']",
@@ -148,10 +149,12 @@ if __name__ == "__main__":
     parser.set_defaults(dcrf=False)
 
     parser.add_argument(
-        "--img_path", nargs="?", type=str, default=None, help="Path of the input image"
+        "--folder_path", nargs="?", type=str, default='../data/samples', help="Path of the input image"
     )
     parser.add_argument(
-        "--out_path", nargs="?", type=str, default=None, help="Path of the output segmap"
+        "--out_path", nargs="?", type=str, default='output', help="Path of the output segmap"
     )
     args = parser.parse_args()
-    test(args)
+    files = sorted(glob.glob("%s/*.*" % args.folder_path))
+    for img_path in files:
+        test(args, img_path)

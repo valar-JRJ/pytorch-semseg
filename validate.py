@@ -91,14 +91,14 @@ if __name__ == "__main__":
         "--config",
         nargs="?",
         type=str,
-        default="configs/fcn8s_pascal.yml",
+        default="configs/icnet-cityspaces.yaml",
         help="Config file to be used",
     )
     parser.add_argument(
         "--model_path",
         nargs="?",
         type=str,
-        default="fcn8s_pascal_1_26.pkl",
+        default="icnetBN_cityscapes_trainval_90k.pth",
         help="Path to the saved model",
     )
     parser.add_argument(

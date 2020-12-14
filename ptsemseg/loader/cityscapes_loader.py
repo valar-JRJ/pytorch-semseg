@@ -58,7 +58,7 @@ class cityscapesLoader(data.Dataset):
         img_size=(512, 1024),
         augmentations=None,
         img_norm=True,
-        version="cityscapes",
+        version="pascal",
         test_mode=False,
     ):
         """__init__
