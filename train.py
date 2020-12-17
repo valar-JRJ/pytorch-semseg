@@ -206,7 +206,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config",
         type=str,
-        default="configs/segnet.yaml",
+        default="configs/icnet_pascal.yaml",
         help="Configuration file to use",
     )
 

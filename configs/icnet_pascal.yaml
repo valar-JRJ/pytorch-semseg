@@ -1,15 +1,16 @@
 # Model Configuration
 model:
-    arch: icnetBN [options: 'fcn[8,16,32]s, unet, segnet, pspnet, icnet, icnetBN, linknet, frrn[A,B]'
+    arch: icnetBN
     is_batchnorm: True
+    version: pascal
 
 # Data Configuration
 data:
-    dataset: pascal [options: 'pascal, camvid, ade20k, mit_sceneparsing_benchmark, cityscapes, nyuv2, sunrgbd, vistas'] 
+    dataset: pascal
     train_split: train
     val_split: val
-    img_rows: 360
-    img_cols: 480
+    img_rows: 513
+    img_cols: 1025
     path: '../data/pascal/VOCdevkit/VOC2012'
     img_norm: True
 
@@ -21,12 +22,12 @@ training:
     val_interval: 500
     print_interval: 25
     loss:
-        name: multi_scale_crossentropy [options: 'cross_entropy, bootstrapped_cross_entropy, multi_scale_crossentropy']
+        name: multi_scale_cross_entropy
         size_average: True
 
     # Optmizer Configuration
     optimizer:
-        name: sgd [options: 'sgd, adam, adamax, asgd, adadelta, adagrad, rmsprop']
+        name: sgd
         lr: 0.01
         momentum: 0.9
         weight_decay: 0.0001
@@ -38,7 +39,8 @@ training:
 
     # LR Schedule Configuration
     lr_schedule:
-        name: poly_lr [options: 'constant_lr, poly_lr, multi_step, cosine_annealing, exp_lr']
+        name: poly_lr
+        max_iter: 30000
 
     # Resume from checkpoint  
-    resume: icnetBN_cityscapes_trainval_90k.pth
+    resume: #icnetBN_cityscapes_trainval_90k.pth
