@@ -1,8 +1,7 @@
 # Model Configuration
 model:
     arch: icnetBN
-    version: cityscapes
-    #with_bn: True
+    is_batchnorm: True
 
 # Data Configuration
 data:
@@ -12,16 +11,17 @@ data:
     img_rows: 1025
     img_cols: 2049
     path: '../data/Cityscapes/'
+    is_norm: True
 
 # Training Configuration
 training:
     n_workers: 4
     train_iters: 35000
-    batch_size: 8
+    batch_size: 4
     val_interval: 500
     print_interval: 25
     loss:
-        name: cross_entropy
+        name: multi_scale_cross_entropy
         size_average: True
 
     # Optmizer Configuration

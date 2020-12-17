@@ -39,7 +39,7 @@ class icnet(nn.Module):
         block_config=[3, 4, 6, 3],
         input_size=(1025, 2049),
         version=None,
-        is_batchnorm=True,
+        is_batchnorm=False,
     ):
 
         super(icnet, self).__init__()

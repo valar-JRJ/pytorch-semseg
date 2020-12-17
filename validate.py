@@ -115,7 +115,7 @@ if __name__ == "__main__":
         help="Disable evaluation with flipped image |\
                               True by default",
     )
-    parser.set_defaults(eval_flip=True)
+    parser.set_defaults(eval_flip=False)
 
     parser.add_argument(
         "--measure_time",
