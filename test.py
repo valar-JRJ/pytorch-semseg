@@ -19,27 +19,17 @@ except:
     )
 
 
-def test(args, img_path):
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model_file_name = os.path.split(args.model_path)[1]
-    model_name = model_file_name[: model_file_name.find("_")]
-
+def test(args, img_path, device, loader, model):
     # Setup image
     print("Read Input Image from : {}".format(args.folder_path))
     img = misc.imread(img_path)
-
-    data_loader = get_loader(args.dataset)
-    loader = data_loader(root=None, is_transform=True, img_norm=args.img_norm, test_mode=True)
-    n_classes = loader.n_classes
 
     resized_img = misc.imresize(img, (loader.img_size[0], loader.img_size[1]), interp="bicubic")
 
     orig_size = img.shape[:-1]
     if model_name in ["pspnet", "icnet", "icnetBN"]:
         # uint8 with RGB mode, resize width and height which are odd numbers
-        img = misc.imresize(img, (orig_size[0] // 2 * 2 + 1, orig_size[1] // 2 * 2 + 1))
+        img = misc.imresize(img, (orig_size[0] // 32 * 32 + 1, orig_size[1] // 32 * 32 + 1))
     else:
         img = misc.imresize(img, (loader.img_size[0], loader.img_size[1]))
 
@@ -53,14 +43,6 @@ def test(args, img_path):
     img = img.transpose(2, 0, 1)
     img = np.expand_dims(img, 0)
     img = torch.from_numpy(img).float()
-
-    # Setup Model
-    model_dict = {"arch": model_name}
-    model = get_model(model_dict, n_classes, version=args.dataset)
-    state = convert_state_dict(torch.load(args.model_path)["model_state"])
-    model.load_state_dict(state)
-    model.eval()
-    model.to(device)
 
     images = img.to(device)
     outputs = model(images)
@@ -154,7 +136,25 @@ if __name__ == "__main__":
     parser.add_argument(
         "--out_path", nargs="?", type=str, default='output', help="Path of the output segmap"
     )
-    args = parser.parse_args()
-    files = sorted(glob.glob("%s/*.*" % args.folder_path))
-    for img_path in files:
-        test(args, img_path)
+    opt = parser.parse_args()
+
+    model_file_name = os.path.split(opt.model_path)[1]
+    model_name = model_file_name[: model_file_name.find("_")]
+
+    dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    data_loader = get_loader(opt.dataset)
+    img_loader = data_loader(root=None, is_transform=True, img_norm=opt.img_norm, test_mode=True)
+    n_classes = img_loader.n_classes
+
+    # Setup Model
+    model_dict = {"arch": model_name}
+    model = get_model(model_dict, n_classes, version=opt.dataset)
+    state = convert_state_dict(torch.load(opt.model_path)["model_state"])
+    model.load_state_dict(state)
+    model.eval()
+    model.to(dev)
+
+    files = sorted(glob.glob("%s/*.*" % opt.folder_path))
+    for image_path in files:
+        test(opt, image_path, dev, img_loader, model)
