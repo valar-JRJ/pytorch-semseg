@@ -1,0 +1,46 @@
+# Model Configuration
+model:
+    arch: icnetBN
+    is_batchnorm: True
+    version: sunrgbd
+
+# Data Configuration
+data:
+    dataset: sunrgbd
+    train_split: training
+    val_split: val
+    img_rows: 481
+    img_cols: 641
+    path: '../data/pascal/VOCdevkit/VOC2012'
+    img_norm: True
+
+# Training Configuration
+training:
+    n_workers: 4
+    train_iters: 30000
+    batch_size: 16
+    val_interval: 500
+    print_interval: 20
+    loss:
+        name: multi_scale_cross_entropy
+        size_average: True
+
+    # Optmizer Configuration
+    optimizer:
+        name: sgd
+        lr: 0.01
+        momentum: 0.9
+        weight_decay: 0.0001
+       
+    # Augmentations Configuration
+    augmentations:
+        hflip: 0.5                                     #[flip horizontally with chance p]
+        vflip: 0.5                                     #[flip vertically with chance p]
+
+    # LR Schedule Configuration
+    lr_schedule:
+        name: poly_lr
+        max_iter: 30000
+
+    # Resume from checkpoint  
+    resume: #icnetBN_cityscapes_trainval_90k.pth

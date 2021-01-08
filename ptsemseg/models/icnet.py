@@ -17,7 +17,8 @@ from ptsemseg.loss.loss import multi_scale_cross_entropy2d
 
 icnet_specs = {
     "cityscapes": {"n_classes": 19, "input_size": (1025, 2049), "block_config": [3, 4, 6, 3]},
-    "pascal": {"n_classes": 21, "input_size": (513, 1025), "block_config": [3, 4, 6, 3]}
+    "pascal": {"n_classes": 21, "input_size": (513, 1025), "block_config": [3, 4, 6, 3]},
+    "sunrgbd": {"n_classes": 38, "input_size": (481, 641), "block_config": [3, 4, 6, 3]}
 }
 
 
