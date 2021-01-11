@@ -36,8 +36,8 @@ def test(args, img_path, device, loader, model):
     img = img[:, :, ::-1]
     img = img.astype(np.float64)
     img -= loader.mean
-    if args.img_norm:
-        img = img.astype(float) / 255.0
+    # if args.img_norm:
+    #     img = img.astype(float) / 255.0
 
     # NHWC -> NCHW
     img = img.transpose(2, 0, 1)
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         help="Disable input image scales normalization [0, 1] |\
                               True by default",
     )
-    parser.set_defaults(img_norm=True)
+    parser.set_defaults(img_norm=False)
 
     parser.add_argument(
         "--dcrf",
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     n_classes = img_loader.n_classes
 
     # Setup Model
-    model_dict = {"arch": model_name}
+    model_dict = {"arch": model_name, "is_batchnorm": True}
     model = get_model(model_dict, n_classes, version=opt.dataset)
     state = convert_state_dict(torch.load(opt.model_path)["model_state"])
     model.load_state_dict(state)

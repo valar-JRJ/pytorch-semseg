@@ -47,6 +47,7 @@ def train(cfg, writer, logger):
         split=cfg["data"]["train_split"],
         img_size=(cfg["data"]["img_rows"], cfg["data"]["img_cols"]),
         augmentations=data_aug,
+        img_norm=cfg['data']['img_norm']
     )
 
     v_loader = data_loader(
@@ -54,6 +55,7 @@ def train(cfg, writer, logger):
         is_transform=True,
         split=cfg["data"]["val_split"],
         img_size=(cfg["data"]["img_rows"], cfg["data"]["img_cols"]),
+        img_norm=cfg['data']['img_norm']
     )
 
     n_classes = t_loader.n_classes

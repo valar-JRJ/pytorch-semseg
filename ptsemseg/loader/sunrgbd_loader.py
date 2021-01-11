@@ -29,7 +29,7 @@ class SUNRGBDLoader(data.Dataset):
         is_transform=False,
         img_size=(480, 640),
         augmentations=None,
-        img_norm=True,
+        img_norm=False,
         test_mode=False,
     ):
         self.root = root
@@ -53,7 +53,7 @@ class SUNRGBDLoader(data.Dataset):
 
         for split in ["train", "test"]:
             file_list = sorted(
-                recursive_glob(rootdir=self.root + "annotations/" + split + "/", suffix="png")
+                recursive_glob(rootdir=self.root + "labels/" + split + "/", suffix="png")
             )
             self.anno_files[split] = file_list
 
@@ -148,9 +148,9 @@ class SUNRGBDLoader(data.Dataset):
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
-    augmentations = Compose([Scale(512), RandomRotate(10), RandomHorizontallyFlip()])
+    augmentations = Compose([Scale(512), RandomRotate(10), RandomHorizontallyFlip(0.5)])
 
-    local_path = "/home/meet/datasets/SUNRGBD/"
+    local_path = "../data/sunrgbd"
     dst = SUNRGBDLoader(local_path, is_transform=True, augmentations=augmentations)
     bs = 4
     trainloader = data.DataLoader(dst, batch_size=bs, num_workers=0)

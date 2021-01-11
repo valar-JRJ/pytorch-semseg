@@ -11,7 +11,7 @@ data:
     val_split: val
     img_rows: 481
     img_cols: 641
-    path: '../data/pascal/VOCdevkit/VOC2012'
+    path: '../data/sunrgbd'
     img_norm: True
 
 # Training Configuration
