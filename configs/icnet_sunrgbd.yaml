@@ -11,7 +11,8 @@ data:
     val_split: val
     img_rows: 481
     img_cols: 641
-    path: '../data/sunrgbd'
+#    path: '../data/sunrgbd'
+    path: '../sunrgbd'
     img_norm: True
 
 # Training Configuration

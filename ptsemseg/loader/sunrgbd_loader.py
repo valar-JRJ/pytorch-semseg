@@ -1,3 +1,4 @@
+import os
 import collections
 import torch
 import numpy as np
@@ -47,15 +48,20 @@ class SUNRGBDLoader(data.Dataset):
         split_map = {"training": "train", "val": "test"}
         self.split = split_map[split]
 
-        for split in ["train", "test"]:
-            file_list = sorted(recursive_glob(rootdir=self.root + split + "/", suffix="jpg"))
-            self.files[split] = file_list
+        self.images_base = os.path.join(self.root, self.split)
+        self.annotations_base = os.path.join(self.root, "labels", self.split)
+        print(self.images_base)
+        print(self.annotations_base)
 
-        for split in ["train", "test"]:
-            file_list = sorted(
-                recursive_glob(rootdir=self.root + "labels/" + split + "/", suffix="png")
-            )
-            self.anno_files[split] = file_list
+        # for split in ["train", "test"]:
+        file_list = sorted(recursive_glob(rootdir=self.images_base, suffix="jpg"))
+        self.files[self.split] = file_list
+        # print(self.files[self.split])
+
+        # for split in ["train", "test"]:
+        file_list = sorted(recursive_glob(rootdir=self.annotations_base, suffix="png"))
+        self.anno_files[self.split] = file_list
+        # print(self.anno_files[self.split])
 
     def __len__(self):
         return len(self.files[self.split])
@@ -63,6 +69,8 @@ class SUNRGBDLoader(data.Dataset):
     def __getitem__(self, index):
         img_path = self.files[self.split][index].rstrip()
         lbl_path = self.anno_files[self.split][index].rstrip()
+        print(img_path)
+        print(lbl_path)
         # img_number = img_path.split('/')[-1]
         # lbl_path = os.path.join(self.root, 'annotations', img_number).replace('jpg', 'png')
 
@@ -150,7 +158,7 @@ if __name__ == "__main__":
 
     augmentations = Compose([Scale(512), RandomRotate(10), RandomHorizontallyFlip(0.5)])
 
-    local_path = "../data/sunrgbd"
+    local_path = "../../../sunrgbd"
     dst = SUNRGBDLoader(local_path, is_transform=True, augmentations=augmentations)
     bs = 4
     trainloader = data.DataLoader(dst, batch_size=bs, num_workers=0)
