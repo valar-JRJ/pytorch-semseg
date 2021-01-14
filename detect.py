@@ -28,9 +28,10 @@ def test(args):
     # Setup image
     print("Read Input Image from : {}".format(args.img_path))
     img = misc.imread(args.img_path)
+    img = np.array(img, dtype=np.uint8)
 
     data_loader = get_loader(args.dataset)
-    loader = data_loader(root=None, is_transform=True, img_norm=args.img_norm, test_mode=True)
+    loader = data_loader(root=None, is_transform=False, img_norm=args.img_norm, test_mode=True)
     n_classes = loader.n_classes
 
     resized_img = misc.imresize(img, (loader.img_size[0], loader.img_size[1]), interp="bicubic")
@@ -38,15 +39,16 @@ def test(args):
     orig_size = img.shape[:-1]
     if model_name in ["pspnet", "icnet", "icnetBN"]:
         # uint8 with RGB mode, resize width and height which are odd numbers
-        img = misc.imresize(img, (orig_size[0] // 2 * 2 + 1, orig_size[1] // 2 * 2 + 1))
+        img = misc.imresize(img, (orig_size[0] // 32 * 32 + 1, orig_size[1] // 32 * 32 + 1))
     else:
         img = misc.imresize(img, (loader.img_size[0], loader.img_size[1]))
 
     img = img[:, :, ::-1]
     img = img.astype(np.float64)
-    img -= loader.mean
-    if args.img_norm:
-        img = img.astype(float) / 255.0
+    # img -= loader.mean
+    img -= np.array([103.939, 116.779, 123.68])
+    # if args.img_norm:
+    #     img = img.astype(float) / 255.0
 
     # NHWC -> NCHW
     img = img.transpose(2, 0, 1)
@@ -54,7 +56,7 @@ def test(args):
     img = torch.from_numpy(img).float()
 
     # Setup Model
-    model_dict = {"arch": model_name}
+    model_dict = {"arch": model_name, "is_batchnorm": True}
     model = get_model(model_dict, n_classes, version=args.dataset)
     state = convert_state_dict(torch.load(args.model_path)["model_state"])
     model.load_state_dict(state)
@@ -94,7 +96,9 @@ def test(args):
 
     decoded = loader.decode_segmap(pred)
     print("Classes found: ", np.unique(pred))
-    misc.imsave(args.out_path, decoded)
+    filename = args.img_path.split('/')[-1].split('.')[0]
+    misc.imsave(f'output/{filename}output.png', decoded)
+    # misc.imsave(args.out_path, decoded)
     print("Segmentation Mask Saved at: {}".format(args.out_path))
 
 

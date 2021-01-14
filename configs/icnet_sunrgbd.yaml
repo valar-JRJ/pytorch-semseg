@@ -11,17 +11,16 @@ data:
     val_split: val
     img_rows: 481
     img_cols: 641
-#    path: '../data/sunrgbd'
-    path: '../sunrgbd'
+    path: '../data/sunrgbd'
     img_norm: True
 
 # Training Configuration
 training:
-    n_workers: 4
+    n_workers: 0
     train_iters: 30000
     batch_size: 16
-    val_interval: 500
-    print_interval: 20
+    val_interval: 1000
+    print_interval: 10
     loss:
         name: multi_scale_cross_entropy
         size_average: True

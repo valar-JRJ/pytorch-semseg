@@ -69,8 +69,8 @@ class SUNRGBDLoader(data.Dataset):
     def __getitem__(self, index):
         img_path = self.files[self.split][index].rstrip()
         lbl_path = self.anno_files[self.split][index].rstrip()
-        print(img_path)
-        print(lbl_path)
+        # print(img_path)
+        # print(lbl_path)
         # img_number = img_path.split('/')[-1]
         # lbl_path = os.path.join(self.root, 'annotations', img_number).replace('jpg', 'png')
 
@@ -107,7 +107,13 @@ class SUNRGBDLoader(data.Dataset):
         lbl = lbl.astype(float)
         lbl = m.imresize(lbl, (self.img_size[0], self.img_size[1]), "nearest", mode="F")
         lbl = lbl.astype(int)
-        assert np.all(classes == np.unique(lbl))
+        # assert np.all(classes == np.unique(lbl))
+        if not np.all(classes == np.unique(lbl)):
+            print("WARN: resizing labels yielded fewer classes")
+
+        if not np.all(np.unique(lbl) < self.n_classes):
+            print("after det", classes, np.unique(lbl))
+            raise ValueError("Segmentation map contained invalid class values")
 
         img = torch.from_numpy(img).float()
         lbl = torch.from_numpy(lbl).long()
