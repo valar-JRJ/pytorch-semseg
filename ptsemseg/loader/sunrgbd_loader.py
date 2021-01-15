@@ -48,20 +48,21 @@ class SUNRGBDLoader(data.Dataset):
         split_map = {"training": "train", "val": "test"}
         self.split = split_map[split]
 
-        self.images_base = os.path.join(self.root, self.split)
-        self.annotations_base = os.path.join(self.root, "labels", self.split)
-        print(self.images_base)
-        print(self.annotations_base)
+        if not self.test_mode:
+            self.images_base = os.path.join(self.root, self.split)
+            self.annotations_base = os.path.join(self.root, "labels", self.split)
+            print(self.images_base)
+            print(self.annotations_base)
 
-        # for split in ["train", "test"]:
-        file_list = sorted(recursive_glob(rootdir=self.images_base, suffix="jpg"))
-        self.files[self.split] = file_list
-        # print(self.files[self.split])
+            # for split in ["train", "test"]:
+            file_list = sorted(recursive_glob(rootdir=self.images_base, suffix="jpg"))
+            self.files[self.split] = file_list
+            # print(self.files[self.split])
 
-        # for split in ["train", "test"]:
-        file_list = sorted(recursive_glob(rootdir=self.annotations_base, suffix="png"))
-        self.anno_files[self.split] = file_list
-        # print(self.anno_files[self.split])
+            # for split in ["train", "test"]:
+            file_list = sorted(recursive_glob(rootdir=self.annotations_base, suffix="png"))
+            self.anno_files[self.split] = file_list
+            # print(self.anno_files[self.split])
 
     def __len__(self):
         return len(self.files[self.split])

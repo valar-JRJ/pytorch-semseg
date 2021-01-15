@@ -43,4 +43,4 @@ training:
         max_iter: 30000
 
     # Resume from checkpoint  
-    resume: #icnetBN_cityscapes_trainval_90k.pth
+    resume: 'runs/icnet_sunrgbd./5090/icnetBN_sunrgbd_best_model.pkl'
