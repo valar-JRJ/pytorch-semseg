@@ -24,13 +24,14 @@ training:
     loss:
         name: multi_scale_cross_entropy
         size_average: True
+        scale_weight: [0.4, 0.4, 1]
 
     # Optmizer Configuration
     optimizer:
         name: sgd
         lr: 0.01
         momentum: 0.9
-        weight_decay: 0.0001
+        weight_decay: 0.0005
        
     # Augmentations Configuration
     augmentations:
@@ -43,4 +44,5 @@ training:
         max_iter: 30000
 
     # Resume from checkpoint  
-    resume: 'runs/icnet_sunrgbd./5090/icnetBN_sunrgbd_best_model.pkl'
+    resume:
+#    resume: 'runs/icnet_sunrgbd./5090/icnetBN_sunrgbd_best_model.pkl'
