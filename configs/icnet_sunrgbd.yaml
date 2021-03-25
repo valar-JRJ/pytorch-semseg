@@ -9,7 +9,7 @@ data:
     dataset: sunrgbd
     train_split: training
     val_split: val
-    img_rows: 481
+    img_rows: 641
     img_cols: 641
     path: '../data/sunrgbd'
     img_norm: True
@@ -17,32 +17,34 @@ data:
 # Training Configuration
 training:
     n_workers: 0
-    train_iters: 30000
-    batch_size: 16
-    val_interval: 1000
+    train_iters: 50000
+    batch_size: 12
+    val_interval: 500
     print_interval: 10
     loss:
         name: multi_scale_cross_entropy
         size_average: True
-        scale_weight: [0.4, 0.4, 1]
+        scale_weight: [1, 0.4, 0.16]
 
     # Optmizer Configuration
     optimizer:
         name: sgd
         lr: 0.01
         momentum: 0.9
-        weight_decay: 0.0005
+        weight_decay: 0.001
        
     # Augmentations Configuration
     augmentations:
+        gamma: 0.5
+        rotate: 60
         hflip: 0.5                                     #[flip horizontally with chance p]
         vflip: 0.5                                     #[flip vertically with chance p]
 
     # LR Schedule Configuration
     lr_schedule:
         name: poly_lr
-        max_iter: 30000
+        max_iter: 50000
 
     # Resume from checkpoint  
     resume:
-#    resume: 'runs/icnet_sunrgbd./5090/icnetBN_sunrgbd_best_model.pkl'
+#    resume: 'runs/icnet_sunrgbd./72949/icnetBN_sunrgbd_best_model.pkl'
