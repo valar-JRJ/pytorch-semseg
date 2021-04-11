@@ -13,6 +13,7 @@ pspnet_specs = {
     "pascal": {"n_classes": 21, "input_size": (473, 473), "block_config": [3, 4, 23, 3]},
     "cityscapes": {"n_classes": 19, "input_size": (713, 713), "block_config": [3, 4, 23, 3]},
     "ade20k": {"n_classes": 150, "input_size": (473, 473), "block_config": [3, 4, 6, 3]},
+    "sunrgbd": {"n_classes": 38, "input_size": (473, 473), "block_config": [3, 4, 6, 3]}
 }
 
 

@@ -78,7 +78,7 @@ def test(args, img_path, device, loader, model):
     decoded = loader.decode_segmap(pred)
     print("Classes found: ", np.unique(pred))
     filename = img_path.split('/')[-1].split('.')[0]
-    misc.imsave(f'output/{filename}output.png', decoded)
+    misc.imsave('output/{}output.png'.format(filename), decoded)
     # misc.imsave(args.out_path, decoded)
     print("Segmentation Mask Saved at: {}".format(args.out_path))
 
@@ -88,13 +88,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_path",
         type=str,
-        default="runs/segnet./24756/segnet_pascal_best_model.pkl",
+        default="runs/icnet_sunrgbd./36340/icnetBN_sunrgbd_best_model.pkl",
         help="Path to the saved model",
     )
     parser.add_argument(
         "--dataset",
         type=str,
-        default="pascal",
+        default="sunrgbd",
         help="Dataset to use ['pascal, camvid, ade20k etc']",
     )
 
