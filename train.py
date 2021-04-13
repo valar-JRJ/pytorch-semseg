@@ -18,7 +18,6 @@ from ptsemseg.metrics import runningScore, averageMeter
 from ptsemseg.augmentations import get_composed_augmentations
 from ptsemseg.schedulers import get_scheduler
 from ptsemseg.optimizers import get_optimizer
-from ptsemseg.regularization import Regularization
 
 from tensorboardX import SummaryWriter
 
@@ -130,9 +129,6 @@ def train(cfg, writer, logger):
             outputs = model(images)
 
             loss = loss_fn(input=outputs, target=labels)
-            if weight_decay > 0:
-                loss = loss + reg_loss(model)
-            loss = loss.item()
 
             loss.backward()
             optimizer.step()

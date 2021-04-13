@@ -14,6 +14,7 @@ from ptsemseg.models.utils import (
     pyramidPooling,
 )
 from ptsemseg.loss.loss import multi_scale_cross_entropy2d
+import ptsemseg.models.resnet as models
 
 icnet_specs = {
     "cityscapes": {"n_classes": 19, "input_size": (1025, 2049), "block_config": [3, 4, 6, 3]},
@@ -53,6 +54,22 @@ class icnet(nn.Module):
         )
         self.n_classes = icnet_specs[version]["n_classes"] if version is not None else n_classes
         self.input_size = icnet_specs[version]["input_size"] if version is not None else input_size
+
+        resnet = models.resnet50(pretrained=True)
+        self.layer0 = nn.Sequential(resnet.conv1, resnet.bn1, resnet.relu, resnet.conv2, resnet.bn2, resnet.relu,
+                                    resnet.conv3, resnet.bn3, resnet.relu, resnet.maxpool)
+        self.layer1, self.layer2, self.layer3, self.layer4 = resnet.layer1, resnet.layer2, resnet.layer3, resnet.layer4
+
+        for n, m in self.layer3.named_modules():
+            if 'conv2' in n:
+                m.dilation, m.padding, m.stride = (2, 2), (2, 2), (1, 1)
+            elif 'downsample.0' in n:
+                m.stride = (1, 1)
+        for n, m in self.layer4.named_modules():
+            if 'conv2' in n:
+                m.dilation, m.padding, m.stride = (4, 4), (4, 4), (1, 1)
+            elif 'downsample.0' in n:
+                m.stride = (1, 1)
 
         # Encoder
         self.convbnrelu1_1 = conv2DBatchNormRelu(
@@ -182,15 +199,18 @@ class icnet(nn.Module):
         )
 
         # H/2, W/2 -> H/4, W/4
-        x_sub2 = self.convbnrelu1_1(x_sub2)
-        x_sub2 = self.convbnrelu1_2(x_sub2)
-        x_sub2 = self.convbnrelu1_3(x_sub2)
+        # x_sub2 = self.convbnrelu1_1(x_sub2)
+        # x_sub2 = self.convbnrelu1_2(x_sub2)
+        # x_sub2 = self.convbnrelu1_3(x_sub2)
 
         # H/4, W/4 -> H/8, W/8
-        x_sub2 = F.max_pool2d(x_sub2, 3, 2, 1)
+        # x_sub2 = F.max_pool2d(x_sub2, 3, 2, 1)
+        x_sub2 = self.layer0(x_sub2)  # resnet conv+maxpool
 
         # H/8, W/8 -> H/16, W/16
-        x_sub2 = self.res_block2(x_sub2)
+        # x_sub2 = self.res_block2(x_sub2)
+        x_sub2 = self.layer1(x_sub2)
+
         x_sub2 = self.res_block3_conv(x_sub2)
         # H/16, W/16 -> H/32, W/32
         x_sub4 = F.interpolate(
@@ -198,8 +218,10 @@ class icnet(nn.Module):
         )
         x_sub4 = self.res_block3_identity(x_sub4)
 
-        x_sub4 = self.res_block4(x_sub4)
-        x_sub4 = self.res_block5(x_sub4)
+        # x_sub4 = self.res_block4(x_sub4)
+        # x_sub4 = self.res_block5(x_sub4)
+        x_sub4 = self.layer3(x_sub4)
+        x_sub4 = self.layer4(x_sub4)
 
         x_sub4 = self.pyramid_pooling(x_sub4)
         x_sub4 = self.conv5_4_k1(x_sub4)
