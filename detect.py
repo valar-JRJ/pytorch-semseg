@@ -28,10 +28,9 @@ def test(args):
     # Setup image
     print("Read Input Image from : {}".format(args.img_path))
     img = misc.imread(args.img_path)
-    img = np.array(img, dtype=np.uint8)
 
     data_loader = get_loader(args.dataset)
-    loader = data_loader(root=None, is_transform=False, img_norm=args.img_norm, test_mode=True)
+    loader = data_loader(root=None, is_transform=True, img_norm=args.img_norm, test_mode=True)
     n_classes = loader.n_classes
 
     resized_img = misc.imresize(img, (loader.img_size[0], loader.img_size[1]), interp="bicubic")
@@ -45,8 +44,8 @@ def test(args):
 
     img = img[:, :, ::-1]
     img = img.astype(np.float64)
-    # img -= loader.mean
-    img -= np.array([103.939, 116.779, 123.68])
+    print(loader.mean)
+    img -= loader.mean
     # if args.img_norm:
     #     img = img.astype(float) / 255.0
 
@@ -58,7 +57,8 @@ def test(args):
     # Setup Model
     model_dict = {"arch": model_name, "is_batchnorm": True}
     model = get_model(model_dict, n_classes, version=args.dataset)
-    state = convert_state_dict(torch.load(args.model_path)["model_state"])
+    state = convert_state_dict(torch.load(args.model_path, map_location='cpu')["model_state"])
+    # state = convert_state_dict(torch.load(args.model_path)["model_state"])
     model.load_state_dict(state)
     model.eval()
     model.to(device)
@@ -96,9 +96,9 @@ def test(args):
 
     decoded = loader.decode_segmap(pred)
     print("Classes found: ", np.unique(pred))
+    # misc.imsave(args.out_path, decoded)
     filename = args.img_path.split('/')[-1].split('.')[0]
     misc.imsave(f'output/{filename}output.png', decoded)
-    # misc.imsave(args.out_path, decoded)
     print("Segmentation Mask Saved at: {}".format(args.out_path))
 
 
