@@ -1,6 +1,6 @@
 # Model Configuration
 model:
-    arch: icnetBN
+    arch: icnet
     is_batchnorm: True
     version: sunrgbd
 
@@ -9,27 +9,27 @@ data:
     dataset: sunrgbd
     train_split: training
     val_split: val
-    img_rows: 641
-    img_cols: 641
+    img_rows: 481
+    img_cols: 481
     path: '../data/sunrgbd'
     img_norm: True
 
 # Training Configuration
 training:
     n_workers: 0
-    train_iters: 50000
-    batch_size: 12
+    train_iters: 30000
+    batch_size: 16
     val_interval: 500
     print_interval: 10
     loss:
         name: multi_scale_cross_entropy
         size_average: True
-        scale_weight: [1, 0.4, 0.4]
+        scale_weight: [1, 0.4, 0.16]
 
     # Optmizer Configuration
     optimizer:
         name: sgd
-        lr: 0.0001
+        lr: 0.01
         momentum: 0.9
         weight_decay: 0.0005
        
@@ -43,9 +43,9 @@ training:
     # LR Schedule Configuration
     lr_schedule:
         name: multi_step
-        milestones: [50000,60000]
+        milestones: [26000,30000]
         gamma: 0.1
 
     # Resume from checkpoint  
-#    resume:
-    resume: 'runs/icnet_sunrgbd./36340/icnetBN_sunrgbd_best_model.pkl'
+    resume:
+#    resume: 'runs/icnet_sunrgbd./36340/icnetBN_sunrgbd_best_model.pkl'
