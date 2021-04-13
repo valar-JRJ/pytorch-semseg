@@ -79,13 +79,6 @@ def train(cfg, writer, logger):
 
     model = torch.nn.DataParallel(model, device_ids=range(torch.cuda.device_count()))
 
-    # Regularization
-    weight_decay = 100.0
-    if weight_decay > 0:
-        reg_loss = Regularization(model, weight_decay, p=2).to(device)
-    else:
-        print("no regularization")
-
     # Setup optimizer, lr_scheduler and loss function
     optimizer_cls = get_optimizer(cfg)
     optimizer_params = {k: v for k, v in cfg["training"]["optimizer"].items() if k != "name"}
